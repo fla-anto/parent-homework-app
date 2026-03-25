@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guida</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f9fc;--white:#ffffff;--border:#e4e9f0;
+  --text:#1a2033;--muted:#8492a6;
+  --accent:#4f7cff;--accent-light:#eef2ff;--accent-dark:#3a63e0;
+  --green:#22c55e;--green-light:#f0fdf4;
+  --orange:#f59e0b;--orange-light:#fffbeb;
+  --purple:#8b5cf6;--purple-light:#f5f3ff;
+  --red:#ef4444;--red-light:#fef2f2;
+  --r:14px;--shadow:0 2px 12px rgba(0,0,0,0.07);
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding-bottom:48px;}
+.topbar{width:100%;background:var(--white);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+.logo{font-size:22px;font-weight:800;color:var(--accent);}
+.logo-sub{font-size:13px;color:var(--muted);font-weight:600;}
+main{width:100%;max-width:480px;padding:24px 20px;display:flex;flex-direction:column;gap:16px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);}
+.stitle{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;}
+.child-row{display:flex;align-items:center;gap:14px;}
+.child-avatar{width:52px;height:52px;border-radius:50%;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.child-details{flex:1;}
+.child-name{font-size:17px;font-weight:800;}
+.child-class{font-size:13px;color:var(--muted);font-weight:600;margin-top:2px;}
+.edit-btn{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;color:var(--accent);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;}
+.edit-btn:hover{background:var(--accent-light);}
+.class-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.cbtn{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:10px 4px;text-align:center;cursor:pointer;transition:all .15s;font-family:'Nunito',sans-serif;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.cbtn:hover{border-color:var(--accent);background:var(--accent-light);}
+.cbtn.active{background:var(--accent);border-color:var(--accent);}
+.cbtn .num{font-size:16px;font-weight:800;color:var(--muted);}
+.cbtn .lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.3px;}
+.cbtn.active .num,.cbtn.active .lbl{color:white;}
+.upload-zone{border:2px dashed var(--border);border-radius:var(--r);padding:32px 20px;text-align:center;cursor:pointer;position:relative;overflow:hidden;transition:all .2s;background:var(--bg);}
+.upload-zone:hover{border-color:var(--accent);background:var(--accent-light);}
+.upload-zone.filled{border-style:solid;border-color:var(--accent);padding:0;background:var(--white);}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-emoji{font-size:36px;margin-bottom:10px;}
+.upload-title{font-size:16px;font-weight:800;margin-bottom:4px;}
+.upload-hint{font-size:13px;color:var(--muted);font-weight:600;}
+#preview-img{width:100%;border-radius:12px;display:none;max-height:260px;object-fit:contain;}
+.abtn{background:var(--accent);color:white;border:none;border-radius:var(--r);padding:18px;font-size:17px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;box-shadow:0 4px 14px rgba(79,124,255,0.35);}
+.abtn:hover{background:var(--accent-dark);transform:translateY(-1px);}
+.abtn:disabled{background:var(--border);color:var(--muted);box-shadow:none;transform:none;cursor:not-allowed;}
+.spin{width:20px;height:20px;border:2.5px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-steps{display:none;flex-direction:column;gap:8px;}
+.lstep{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--white);border:1px solid var(--border);border-radius:10px;font-size:14px;font-weight:700;color:var(--muted);}
+.lstep.active{color:var(--accent);border-color:var(--accent);background:var(--accent-light);}
+.lstep.done{color:var(--green);border-color:var(--green);background:var(--green-light);}
+.result{display:none;animation:up .4s ease;}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.subject-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:14px;}
+.sb-matematica{background:#dbeafe;color:#1d4ed8;}
+.sb-italiano{background:#dcfce7;color:#15803d;}
+.sb-storia,.sb-geografia{background:#fef9c3;color:#854d0e;}
+.sb-scienze{background:#d1fae5;color:#065f46;}
+.sb-lingue{background:#f3e8ff;color:#6b21a8;}
+.sb-altro{background:var(--bg);color:var(--muted);}
+.step{border-radius:12px;padding:16px;margin-bottom:10px;}
+.step:last-child{margin-bottom:0;}
+.step-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.step-icon{font-size:20px;}
+.step-title{font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;}
+.step p{font-size:14px;line-height:1.75;font-weight:600;}
+.step ul{padding-left:4px;list-style:none;display:flex;flex-direction:column;gap:8px;}
+.step li{font-size:14px;line-height:1.7;font-weight:600;padding-left:20px;position:relative;}
+.step li::before{content:"→";position:absolute;left:0;opacity:.6;}
+.step.what{background:var(--accent-light);}
+.step.what .step-title,.step.what p{color:var(--accent-dark);}
+.step.how{background:var(--green-light);}
+.step.how .step-title,.step.how li{color:#15803d;}
+.step.watch{background:var(--orange-light);}
+.step.watch .step-title,.step.watch li{color:#92400e;}
+.step.check{background:var(--purple-light);}
+.step.check .step-title,.step.check p{color:#5b21b6;}
+.errbox{background:var(--red-light);border:1.5px solid #fecaca;border-radius:12px;padding:14px 16px;font-size:14px;font-weight:700;color:var(--red);display:none;line-height:1.6;}
+.reset-btn{background:#f1f5f9;color:var(--text);box-shadow:none;margin-top:4px;}
+.reset-btn:hover{background:#e2e8f0;transform:none;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Guida 📚</div>
+  <div class="logo-sub">Assistente per i compiti</div>
+</div>
+
+<main>
+
+  <div class="card">
+    <div class="stitle">Chi fa i compiti?</div>
+    <div class="child-row">
+      <div class="child-avatar">🧒</div>
+      <div class="child-details">
+        <div class="child-name" id="cname">Marco</div>
+        <div class="child-class" id="cclass-display">Terza elementare</div>
+      </div>
+      <button class="edit-btn" onclick="editName()">Modifica</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="stitle">Che classe frequenta?</div>
+    <div class="class-grid">
+      <button class="cbtn" onclick="pickClass(this,'Prima elementare')"><span class="num">1ª</span><span class="lbl">Elem</span></button>
+      <button class="cbtn" onclick="pickClass(this,'Seconda elementare')"><span class="num">2ª</span><span class="lbl">Elem</span></button>
+      <button class="cbtn active" onclick="pickClass(this,'Terza elementare')"><span class="num">3ª</span><span class="lbl">Elem</span></button>
+      <button class="cbtn" onclick="pickClass(this,'Quarta elementare')"><span class="num">4ª</span><span class="lbl">Elem</span></button>
+      <button class="cbtn" onclick="pickClass(this,'Quinta elementare')"><span class="num">5ª</span><span class="lbl">Elem</span></button>
+      <button class="cbtn" onclick="pickClass(this,'Prima media')"><span class="num">1ª</span><span class="lbl">Media</span></button>
+      <button class="cbtn" onclick="pickClass(this,'Seconda media')"><span class="num">2ª</span><span class="lbl">Media</span></button>
+      <button class="cbtn" onclick="pickClass(this,'Terza media')"><span class="num">3ª</span><span class="lbl">Media</span></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="stitle">Fotografa il compito</div>
+    <div class="upload-zone" id="upload-zone">
+      <input type="file" id="file-input" accept="image/*" onchange="handleFile(event)">
+      <div id="upload-placeholder">
+        <div class="upload-emoji">📷</div>
+        <div class="upload-title">Carica la foto del compito</div>
+        <div class="upload-hint">Tocca qui per scegliere l'immagine</div>
+      </div>
+      <img id="preview-img" alt="Anteprima compito">
+    </div>
+  </div>
+
+  <button class="abtn" id="abtn" onclick="analyze()" disabled>
+    <div class="spin" id="spin"></div>
+    <span id="btntxt">✨ Analizza il compito</span>
+  </button>
+
+  <div class="loading-steps" id="loading-steps">
+    <div class="lstep" id="ls1"><span>🔍</span> Leggo il compito...</div>
+    <div class="lstep" id="ls2"><span>🧠</span> Identifico l'argomento...</div>
+    <div class="lstep" id="ls3"><span>💡</span> Preparo i consigli per te...</div>
+  </div>
+
+  <div class="errbox" id="errbox"></div>
+
+  <div class="result" id="result">
+    <div class="card">
+      <div id="badge-container"></div>
+      <div class="step what">
+        <div class="step-header"><span class="step-icon">📖</span><span class="step-title">Di cosa si tratta</span></div>
+        <p id="r-what"></p>
+      </div>
+      <div class="step how">
+        <div class="step-header"><span class="step-icon">💬</span><span class="step-title" id="r-how-title">Come spiegarlo</span></div>
+        <ul id="r-how"></ul>
+      </div>
+      <div class="step watch">
+        <div class="step-header"><span class="step-icon">⚠️</span><span class="step-title">Errori comuni da evitare</span></div>
+        <ul id="r-watch"></ul>
+      </div>
+      <div class="step check">
+        <div class="step-header"><span class="step-icon">✅</span><span class="step-title">Verifica che abbia capito</span></div>
+        <p id="r-check"></p>
+      </div>
+    </div>
+    <button class="abtn reset-btn" onclick="resetApp()">📷 Analizza un altro compito</button>
+  </div>
+
+</main>
+
+<script>
+let selectedClassFull = 'Terza elementare';
+let selectedFile = null;
+const API_URL = 'http://localhost:8000/analyze';
+const ICONS = {matematica:'🔢',italiano:'📝',storia:'📜',geografia:'🗺️',scienze:'🔬',lingue:'🌍',altro:'📚'};
+
+function pickClass(btn, full) {
+  document.querySelectorAll('.cbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedClassFull = full;
+  document.getElementById('cclass-display').textContent = full;
+}
+
+function editName() {
+  const n = prompt('Nome del figlio:', document.getElementById('cname').textContent);
+  if (n && n.trim()) document.getElementById('cname').textContent = n.trim();
+}
+
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  selectedFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = document.getElementById('preview-img');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    document.getElementById('upload-placeholder').style.display = 'none';
+    document.getElementById('upload-zone').classList.add('filled');
+    document.getElementById('abtn').disabled = false;
+    document.getElementById('result').style.display = 'none';
+    document.getElementById('errbox').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function setStep(n) {
+  ['ls1','ls2','ls3'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    el.className = 'lstep' + (i < n-1 ? ' done' : i === n-1 ? ' active' : '');
+  });
+}
+
+function renderResult(data, name) {
+  const topic = (data.topic||'altro').toLowerCase();
+  const cls = ['matematica','italiano','storia','geografia','scienze','lingue'].includes(topic) ? topic : 'altro';
+  document.getElementById('badge-container').innerHTML =
+    `<span class="subject-badge sb-${cls}">${ICONS[cls]} ${data.subject||'Argomento rilevato'}</span>`;
+  document.getElementById('r-what').textContent = data.what || '';
+  document.getElementById('r-how-title').textContent = `Come spiegarlo a ${name}`;
+  document.getElementById('r-how').innerHTML = (data.how||[]).map(h=>`<li>${h}</li>`).join('');
+  document.getElementById('r-watch').innerHTML = (data.watch||[]).map(w=>`<li>${w}</li>`).join('');
+  document.getElementById('r-check').textContent = data.check || '';
+}
+
+function resetApp() {
+  selectedFile = null;
+  document.getElementById('preview-img').style.display = 'none';
+  document.getElementById('upload-placeholder').style.display = 'block';
+  document.getElementById('upload-zone').classList.remove('filled');
+  document.getElementById('file-input').value = '';
+  document.getElementById('abtn').disabled = true;
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('errbox').style.display = 'none';
+  document.getElementById('loading-steps').style.display = 'none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function analyze() {
+  if (!selectedFile) return;
+  const name = document.getElementById('cname').textContent.trim();
+  const btn = document.getElementById('abtn');
+  const spin = document.getElementById('spin');
+  const btntxt = document.getElementById('btntxt');
+  const errbox = document.getElementById('errbox');
+  const result = document.getElementById('result');
+  const ls = document.getElementById('loading-steps');
+
+  btn.disabled = true; spin.style.display = 'block';
+  btntxt.textContent = 'Analisi in corso...';
+  errbox.style.display = 'none'; result.style.display = 'none';
+  ls.style.display = 'flex'; setStep(1);
+
+  const t1 = setTimeout(()=>setStep(2), 1200);
+  const t2 = setTimeout(()=>setStep(3), 2800);
+
+  const form = new FormData();
+  form.append('image', selectedFile);
+  form.append('child_name', name);
+  form.append('child_class', selectedClassFull);
+
+  try {
+    const res = await fetch(API_URL, {method:'POST', body:form});
+    clearTimeout(t1); clearTimeout(t2);
+    if (!res.ok) {
+      const e = await res.json().catch(()=>({}));
+      throw new Error(e.detail || `Errore server ${res.status}`);
+    }
+    const data = await res.json();
+    ls.style.display = 'none';
+    renderResult(data, name);
+    result.style.display = 'block';
+    setTimeout(()=>result.scrollIntoView({behavior:'smooth',block:'start'}), 100);
+  } catch(err) {
+    clearTimeout(t1); clearTimeout(t2);
+    ls.style.display = 'none';
+    errbox.textContent = `Errore: ${err.message}`;
+    errbox.style.display = 'block';
+  } finally {
+    btn.disabled = false; spin.style.display = 'none';
+    btntxt.textContent = '✨ Analizza il compito';
+  }
+}
+</script>
+</body>
+</html>
