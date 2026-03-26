@@ -167,6 +167,17 @@ main{width:100%;max-width:480px;padding:24px 20px;display:flex;flex-direction:co
         <p id="r-check"></p>
       </div>
     </div>
+    <div id="chat-section" class="chat-section" style="display:none;">
+  <h3>Dubbi? Chiedi a Guida</h3>
+  <p class="chat-subtitle">Se qualcosa non ti è chiaro, scrivimi qui. Ti aiuto a spiegarlo meglio a tuo figlio.</p>
+
+  <div id="chat-messages" class="chat-messages"></div>
+
+  <div class="chat-input-row">
+    <textarea id="chat-input" placeholder="Es: Non ho capito bene come spiegargli questo passaggio..." rows="3"></textarea>
+    <button class="abtn" onclick="sendChatMessage()" id="chat-send-btn">💬 Invia domanda</button>
+  </div>
+</div>
     <button class="abtn reset-btn" onclick="resetApp()">📷 Analizza un altro compito</button>
   </div>
 
