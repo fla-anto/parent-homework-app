@@ -217,17 +217,34 @@ function setStep(n) {
 }
 
 function renderResult(data, name) {
-  const topic = (data.topic||'altro').toLowerCase();
+  lastAnalysis = data;
+
+  const topic = (data.topic || 'altro').toLowerCase();
   const cls = ['matematica','italiano','storia','geografia','scienze','lingue'].includes(topic) ? topic : 'altro';
+
   document.getElementById('badge-container').innerHTML =
-    `<span class="subject-badge sb-${cls}">${ICONS[cls]} ${data.subject||'Argomento rilevato'}</span>`;
+    `<span class="subject-badge sb-${cls}">${ICONS[cls]} ${data.subject || 'Argomento rilevato'}</span>`;
+
   document.getElementById('r-what').textContent = data.what || '';
   document.getElementById('r-how-title').textContent = `Come spiegarlo a ${name}`;
-  document.getElementById('r-how').innerHTML = (data.how||[]).map(h=>`<li>${h}</li>`).join('');
-  document.getElementById('r-watch').innerHTML = (data.watch||[]).map(w=>`<li>${w}</li>`).join('');
+  document.getElementById('r-how').innerHTML = (data.how || []).map(h => `<li>${h}</li>`).join('');
+  document.getElementById('r-watch').innerHTML = (data.watch || []).map(w => `<li>${w}</li>`).join('');
   document.getElementById('r-check').textContent = data.check || '';
-}
 
+  const chatWrap = document.getElementById('chat-section');
+  if (chatWrap) {
+    chatWrap.style.display = 'block';
+  }
+
+  const chatMessages = document.getElementById('chat-messages');
+  if (chatMessages) {
+    chatMessages.innerHTML = `
+      <div class="chat-bubble bot">
+        Se hai ancora dubbi, puoi scrivermi qui sotto. Ti aiuto a capire meglio come spiegarlo a ${name}.
+      </div>
+    `;
+  }
+}
 function resetApp() {
   selectedFile = null;
   document.getElementById('preview-img').style.display = 'none';
