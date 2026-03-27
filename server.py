@@ -164,10 +164,11 @@ async def analyze(
     media_type = image.content_type or "image/jpeg"
 
     user_message = (
-        f"Il compito è di {child_name}, che frequenta la {child_class}. "
-        "Analizza l'immagine e rispondi con il JSON strutturato richiesto."
-    )
-
+    f"Il compito appartiene a uno studente seguito da un insegnante di sostegno. "
+    f"Nome studente: {child_name}. Classe: {child_class}. "
+    "Analizza l'immagine del compito e restituisci indicazioni didattiche precise per aiutare l'insegnante di sostegno a preparare la spiegazione. "
+    "L'obiettivo non è risolvere il compito, ma spiegare come mediare il concetto in modo accessibile, concreto e accurato."
+)
     client = get_client()
 
     try:
@@ -220,34 +221,49 @@ async def chat(
     child_name: str = Form(...),
     child_class: str = Form(...),
     subject: str = Form(""),
-    what: str = Form(""),
-    how: str = Form(""),
+    intro: str = Form(""),
+    goal: str = Form(""),
+    method: str = Form(""),
+    supports: str = Form(""),
     watch: str = Form(""),
+    adaptations: str = Form(""),
     check: str = Form(""),
+    notes: str = Form(""),
 ):
     client = get_client()
-
+    
     context = f"""
-Nome bambino: {child_name}
+Studente: {child_name}
 Classe: {child_class}
 Argomento: {subject}
 
-Spiegazione introduttiva:
-{what}
+Introduzione:
+{intro}
 
-Come spiegarlo:
-{how}
+Obiettivo didattico:
+{goal}
 
-Errori comuni:
+Metodo suggerito:
+{method}
+
+Supporti consigliati:
+{supports}
+
+Errori o ostacoli prevedibili:
 {watch}
 
-Verifica comprensione:
+Adattamenti possibili:
+{adaptations}
+
+Verifica:
 {check}
 
-Domanda del genitore:
+Note finali:
+{notes}
+
+Domanda dell'insegnante:
 {parent_message}
 """
-
     try:
         response = client.messages.create(
             model="claude-sonnet-4-20250514",
