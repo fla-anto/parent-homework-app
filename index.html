@@ -198,10 +198,9 @@ function pickClass(btn, full) {
 }
 
 function editName() {
-  const n = prompt('Nome del figlio:', document.getElementById('cname').textContent);
+  const n = prompt('Nome dello studente:', document.getElementById('cname').textContent);
   if (n && n.trim()) document.getElementById('cname').textContent = n.trim();
 }
-
 function handleFile(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -236,16 +235,48 @@ function renderResult(data, name) {
   document.getElementById('badge-container').innerHTML =
     `<span class="subject-badge sb-${cls}">${ICONS[cls]} ${data.subject || 'Argomento rilevato'}</span>`;
 
-  document.getElementById('r-what').textContent = data.what || '';
-  document.getElementById('r-how-title').textContent = `Come spiegarlo a ${name}`;
-  document.getElementById('r-how').innerHTML = (data.how || []).map(h => `<li>${h}</li>`).join('');
-  document.getElementById('r-watch').innerHTML = (data.watch || []).map(w => `<li>${w}</li>`).join('');
-  document.getElementById('r-check').textContent = data.check || '';
+  document.getElementById('r-what').textContent = data.intro || '';
+  document.getElementById('r-how-title').textContent = `Come preparare la spiegazione per ${name}`;
+
+  const methodHtml = (data.method || []).map(item => `
+    <li>
+      <strong>${item.step || ''}</strong><br>
+      <span><strong>Cosa fare:</strong> ${item.teacher_action || ''}</span><br>
+      <span><strong>Perché:</strong> ${item.why || ''}</span>
+    </li>
+  `).join('');
+
+  document.getElementById('r-how').innerHTML = methodHtml;
+
+  const supportsHtml = (data.supports || []).map(s => `<li>${s}</li>`).join('');
+  const watchHtml = (data.watch || []).map(w => `<li>${w}</li>`).join('');
+  const adaptHtml = (data.adaptations || []).map(a => `<li>${a}</li>`).join('');
+  const checkHtml = (data.check || []).map(c => `<li>${c}</li>`).join('');
+
+  document.getElementById('r-watch').innerHTML = `
+    <li><strong>Obiettivo:</strong> ${data.goal || ''}</li>
+    ${supportsHtml}
+    ${watchHtml}
+    ${adaptHtml}
+  `;
+
+  document.getElementById('r-check').innerHTML = `
+    <ul>${checkHtml}</ul>
+    <p style="margin-top:10px;"><strong>Nota finale:</strong> ${data.notes || ''}</p>
+  `;
 
   const chatWrap = document.getElementById('chat-section');
-  if (chatWrap) {
-    chatWrap.style.display = 'block';
+  if (chatWrap) chatWrap.style.display = 'block';
+
+  const chatMessages = document.getElementById('chat-messages');
+  if (chatMessages) {
+    chatMessages.innerHTML = `
+      <div class="chat-bubble bot">
+        Se hai dubbi sul metodo, sui supporti o su come spiegare meglio il concetto, scrivimi qui.
+      </div>
+    `;
   }
+}
 
   const chatMessages = document.getElementById('chat-messages');
   if (chatMessages) {
@@ -312,6 +343,53 @@ async function analyze() {
   } finally {
     btn.disabled = false; spin.style.display = 'none';
     btntxt.textContent = '✨ Analizza il compito';
+  }
+}
+  async function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  const chatMessages = document.getElementById('chat-messages');
+  const sendBtn = document.getElementById('chat-send-btn');
+
+  const message = input.value.trim();
+  if (!message || !lastAnalysis) return;
+
+  const name = document.getElementById('cname').textContent.trim();
+
+  chatMessages.innerHTML += `<div class="chat-bubble user">${message}</div>`;
+  input.value = '';
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Invio...';
+
+  const form = new FormData();
+  form.append('parent_message', message);
+  form.append('child_name', name);
+  form.append('child_class', selectedClassFull);
+  form.append('subject', lastAnalysis.subject || '');
+  form.append('intro', lastAnalysis.intro || '');
+  form.append('goal', lastAnalysis.goal || '');
+  form.append('method', JSON.stringify(lastAnalysis.method || []));
+  form.append('supports', JSON.stringify(lastAnalysis.supports || []));
+  form.append('watch', JSON.stringify(lastAnalysis.watch || []));
+  form.append('adaptations', JSON.stringify(lastAnalysis.adaptations || []));
+  form.append('check', JSON.stringify(lastAnalysis.check || []));
+  form.append('notes', lastAnalysis.notes || '');
+
+  try {
+    const res = await fetch(CHAT_URL, { method: 'POST', body: form });
+
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.detail || `Errore server ${res.status}`);
+    }
+
+    const data = await res.json();
+    chatMessages.innerHTML += `<div class="chat-bubble bot">${data.reply || 'Non sono riuscito a formulare una risposta utile.'}</div>`;
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  } catch (err) {
+    chatMessages.innerHTML += `<div class="chat-bubble bot">C’è stato un problema: ${err.message}</div>`;
+  } finally {
+    sendBtn.disabled = false;
+    sendBtn.textContent = '💬 Invia domanda';
   }
 }
 </script>
